@@ -26,6 +26,13 @@ public class TanqueController {
             }
         });
 
+        view.getBotonValvula2().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                manejarValvulaVaciado();
+            }
+        });
+
         view.getBotonLlenadoManual().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -43,10 +50,51 @@ public class TanqueController {
 
     private void manejarValvulaManual() {
         model.setValvulaAbierta(!model.isValvulaAbierta());
+        view.getBotonLlenadoAutomatico().setEnabled(false);
+        view.getBotonValvula().setEnabled(!model.isValvulaAbierta2());
+        view.getBotonValvula2().setEnabled(!model.isValvulaAbierta());
         view.getBotonValvula().setText(model.isValvulaAbierta() ? "abierta" : "cerrada");
         view.getBotonValvula().setBackground(model.isValvulaAbierta() ? Color.GREEN : Color.RED);
+        view.getBotonValvula2().setText(model.isValvulaAbierta2() ? "abierta" : "cerrada");
+        view.getBotonValvula2().setBackground(model.isValvulaAbierta2() ? Color.GREEN : Color.RED);
         if (model.isValvulaAbierta()) iniciarLlenado();
         else detenerLlenado();
+    }
+
+    private void manejarValvulaVaciado() {
+        model.setValvulaAbierta2(!model.isValvulaAbierta2());
+        view.getBotonValvula2().setText(model.isValvulaAbierta2() ? "abierta" : "cerrada");
+        view.getBotonValvula2().setBackground(model.isValvulaAbierta2() ? Color.GREEN : Color.RED);
+        if (model.isValvulaAbierta2()) iniciarVaciado();
+        else detenerLlenado();
+    }
+
+    private void iniciarVaciado() {
+        timer = new Timer(200, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!model.isMitadAlcanzada() && model.getNivelMetros() >= 0.5) {
+                    model.setMitadAlcanzada(true);
+                    view.getEtiquetaEstado().setText("Estado: Tanque al 50%. Vaciando más lento.");
+                }
+
+                model.setNivelAgua(model.getNivelAgua() - model.getIncrementoLlenado());
+                view.getEtiquetaEstado().setText("Estado: Vaciando tanque al " + (int) (model.getNivelMetros() * 100) + "%");
+                view.actualizarTanque(model.getNivelAgua());
+
+                if (model.isTanqueVacio()) {
+                    detenerLlenado();
+                    view.getEtiquetaEstado().setText("Estado: Tanque vacío al 0%.");
+                    view.getBotonValvula2().setText("cerrada");
+                    view.getBotonValvula2().setBackground(Color.RED);
+                    view.getBotonLlenadoManual().setEnabled(true);
+                    view.getBotonLlenadoAutomatico().setEnabled(true);
+                    model.setValvulaAbierta2(!model.isValvulaAbierta2());
+                    view.getBotonValvula2().setEnabled(false);
+                }
+            }
+        });
+        timer.start();
     }
 
     private void reiniciarLlenadoManual() {
@@ -63,7 +111,6 @@ public class TanqueController {
         timer = new Timer(200, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.getBotonValvula().setEnabled(true);
                 if (!model.isMitadAlcanzada() && model.getNivelMetros() >= 0.5) {
                     model.setMitadAlcanzada(true);
                     view.getEtiquetaEstado().setText("Estado: Tanque al 50%. Llenando más lento.");
@@ -78,8 +125,8 @@ public class TanqueController {
                     view.getEtiquetaEstado().setText("Estado: Tanque lleno al 100%.");
                     view.getBotonValvula().setText("cerrada");
                     view.getBotonValvula().setBackground(Color.RED);
+                    view.getBotonValvula2().setEnabled(true);
                     view.getBotonLlenadoManual().setEnabled(true);
-                    view.getBotonLlenadoAutomatico().setEnabled(true);
                     model.setValvulaAbierta(!model.isValvulaAbierta());
                     view.getBotonValvula().setEnabled(false);
                 }
@@ -87,6 +134,7 @@ public class TanqueController {
         });
         timer.start();
     }
+
 
     private void iniciarLlenadoAutomatico() {
         model.reiniciarTanque();
@@ -108,11 +156,22 @@ public class TanqueController {
                     model.setNivelAgua(model.getNivelAgua() + model.getIncrementoLlenado());
                     view.getEtiquetaEstado().setText("Estado: Llenando tanque al " + (int) (model.getNivelMetros() * 100) + "%");
                     view.actualizarTanque(model.getNivelAgua());
+                    view.getBotonValvula().setBackground(Color.GREEN);
+                    view.getBotonValvula().setText("abierta");
+                    view.getBotonValvula2().setBackground(Color.RED);
+                    view.getBotonValvula2().setText("cerrada");
 
                     if (model.isMitadAlcanzada() && model.getNivelMetros() >= 0.6) {
+
                         model.setNivelAgua(100);
                         view.actualizarTanque(model.getNivelAgua());
+                        view.getBotonValvula().setBackground(Color.RED);
+                        view.getBotonValvula().setText("cerrada");
+                        view.getBotonValvula2().setBackground(Color.GREEN);
+                        view.getBotonValvula2().setText("abierta");
+
                     }
+
                 }
             });
             timer.start();
