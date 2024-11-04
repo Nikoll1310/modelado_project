@@ -8,11 +8,14 @@ public class TanqueModel {
     
     private int nivelAgua;
     private boolean valvulaAbierta;
+
+    private boolean valvulaAbierta2;
     private boolean mitadAlcanzada;
 
     public TanqueModel() {
         nivelAgua = 0;
         valvulaAbierta = false;
+        valvulaAbierta2 = false;
         mitadAlcanzada = false;
     }
 
@@ -28,8 +31,16 @@ public class TanqueModel {
         return valvulaAbierta;
     }
 
+    public boolean isValvulaAbierta2() {
+        return valvulaAbierta2;
+    }
+
     public void setValvulaAbierta(boolean estado) {
         valvulaAbierta = estado;
+    }
+
+    public void setValvulaAbierta2(boolean estado) {
+        valvulaAbierta2 = estado;
     }
 
     public boolean isMitadAlcanzada() {
@@ -45,18 +56,21 @@ public class TanqueModel {
     }
 
     public int getIncrementoLlenado() {
-        if (getNivelMetros() < MEDIO_METRO) return 5; // Velocidad completa
-        if (getNivelMetros() >= MEDIO_METRO && getNivelMetros() < MAX_METROS) return 1; // Velocidad reducida
-        return 0;
+        //if (getNivelMetros() < MEDIO_METRO) return 5; // Velocidad completa
+        if (getNivelMetros() >= MEDIO_METRO && getNivelMetros() < MAX_METROS) return 2; // Velocidad reducida
+        return 5;
     }
 
     public boolean isTanqueLleno() {
         return getNivelMetros() >= MAX_METROS;
     }
 
+    public boolean isTanqueVacio(){ return nivelAgua <= 0;}
+
     public void reiniciarTanque() {
         nivelAgua = 0;
         mitadAlcanzada = false;
         valvulaAbierta = false;
+        valvulaAbierta2 = false;
     }
 }

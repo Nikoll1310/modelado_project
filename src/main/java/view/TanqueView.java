@@ -10,6 +10,7 @@ import java.io.IOException;
 public class TanqueView extends JFrame {
     private JPanel panelTanque;
     private JButton botonValvula;
+    private JButton botonValvula2;
 
     private JButton botonLlenadoManual;
 
@@ -51,11 +52,11 @@ public class TanqueView extends JFrame {
 
                 // Dibujar la manguera de salida
                 g.setColor(Color.GRAY);
-                g.fillRect(251, 292, 100, 10); // Manguera de salida
+                g.fillRect(251, 292, 250, 10); // Manguera de salida
 
                 // Dibujar la imagen de la casita al lado del tanque
                 if (house != null) {
-                    g.drawImage(house, 300, 200, 200, 250, this); // Ajusta la posición y el tamaño según necesites
+                    g.drawImage(house, 350, 200, 200, 250, this); // Ajusta la posición y el tamaño según necesites
                 }
                 if(platfform != null){
                     g.drawImage(platfform, 149, 300, 100, 150, this);
@@ -75,15 +76,25 @@ public class TanqueView extends JFrame {
         panelTanque.setLayout(null); // Establecer layout a null para posicionamiento manual
         add(panelTanque, BorderLayout.CENTER);
 
-        // Botón de abrir y cerrar válvula
+        // Botón de abrir y cerrar válvula 1
         botonValvula = new JButton("cerrada");
+        botonValvula.setEnabled(false);
         botonValvula.setBackground(Color.RED);
         botonValvula.setForeground(Color.WHITE);
-        botonValvula.setBounds(15, 400, 80, 30); // Establecer posición y tamaño (x, y, width, height)
+        botonValvula.setBounds(15, 400, 80, 20); // Establecer posición y tamaño (x, y, width, height)
         panelTanque.add(botonValvula); // Agregar el botón al panel del tanque
+
+        // Botón de abrir y cerrar válvula 1
+        botonValvula2 = new JButton("cerrada");
+        botonValvula2.setEnabled(false);
+        botonValvula2.setBackground(Color.RED);
+        botonValvula2.setForeground(Color.WHITE);
+        botonValvula2.setBounds(280, 286, 80, 20); // Establecer posición y tamaño (x, y, width, height)
+        panelTanque.add(botonValvula2); // Agregar el botón al panel del tanque
 
         // Panel de control
         JPanel panelControl = new JPanel();
+        panelControl.setBackground(Color.green);
         panelControl.setLayout(new FlowLayout());
 
         // Botón de llenado manual
@@ -122,6 +133,9 @@ public class TanqueView extends JFrame {
         return botonValvula;
     }
 
+    public JButton getBotonValvula2() {
+        return botonValvula2;
+    }
     public JLabel getEtiquetaEstado() {
         return etiquetaEstado;
     }
